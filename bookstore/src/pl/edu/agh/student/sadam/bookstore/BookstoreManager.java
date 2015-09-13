@@ -15,7 +15,7 @@ public class BookstoreManager {
 	}
 	
 	private void init(){
-		//tutaj bêdziemy ³adowaæ dane z bazy danych
+		//tutaj bï¿½dziemy ï¿½adowaï¿½ dane z bazy danych
 	}
 	
 	public void addPossibleBook(Book book){
@@ -37,7 +37,7 @@ public class BookstoreManager {
 		bookstore.put(book, bookstore.get(book) + quantity);
 	}
 	
-	public void addBookToWarehouse(Book book, int quantity){
+	public void addBookToWarehouse(Book book, int quantity) throws NotExistsOnPossibleBooksListException{
 		if(quantity < 0)
 			throw new InvalidParameterException();
 		
