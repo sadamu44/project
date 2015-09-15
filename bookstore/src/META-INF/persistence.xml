@@ -4,6 +4,7 @@
   version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="bookstore" transaction-type="RESOURCE_LOCAL">
     <class>pl.edu.agh.student.sadam.bookstore.Book</class>
+    <class>pl.edu.agh.student.sadam.bookstore.BookKeeper</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
       <property name="javax.persistence.jdbc.url"

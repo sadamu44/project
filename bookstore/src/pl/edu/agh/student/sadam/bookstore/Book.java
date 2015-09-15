@@ -11,13 +11,20 @@ public class Book {
 	private String author;
 	
 	public Book(){
-		//TODO ???
 	}
 	
 	public Book(long isbn, String title, String author){
 		this.isbn = isbn;
 		this.setTitle(title);
 		this.setAuthor(author);
+	}
+	
+	public Long getIsbn(){
+		return isbn;
+	}
+	
+	public void setIsbn(Long isbn){
+		this.isbn = isbn;
 	}
 
 	public String getTitle() {

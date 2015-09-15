@@ -41,10 +41,12 @@ public class BookstoreManager {
 
 	    // create new todo
 	    em.getTransaction().begin();
-	    Book todo = new Book(1, "Robinson Crusoe", "Dafoe..?");
-	    //book.setSummary("This is a test");
-	    //book.setDescription("This is a test");
+	    Book todo = new Book(3, "Robinson Crusoe", "Dafoe..?");
+	    BookKeeper keeper = new BookKeeper();
+	    keeper.setBook(todo);
+	    keeper.setAmount(2);
 	    em.persist(todo);
+	    em.persist(keeper);
 	    em.getTransaction().commit();
 
 	    em.close();
