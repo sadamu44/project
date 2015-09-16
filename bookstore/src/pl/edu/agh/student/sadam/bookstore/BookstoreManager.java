@@ -15,6 +15,7 @@ import pl.edu.agh.student.sadam.bookstore.NotExistsOnPossibleBooksListException;
 
 public class BookstoreManager {
 	private static EntityManagerFactory factory;
+	private EntityManager em;
 	//private List<Book> possibleBooks;
 	//private Map<Book, Integer> warehouse;
 	//private Map<Book, Integer> bookstore;
@@ -30,30 +31,33 @@ public class BookstoreManager {
 	
 	private void init(){
 		factory = Persistence.createEntityManagerFactory("bookstore");
-	    EntityManager em = factory.createEntityManager();
+	    em = factory.createEntityManager();
 	    
-	    Query q = em.createQuery("select b from Book b");
-	    List<Book> bookList = q.getResultList();
-	    for (Book todo : bookList) {
-	      System.out.println(todo);
-	    }
-	    System.out.println("Size: " + bookList.size());
-
-	    // create new todo
+	    /*
 	    em.getTransaction().begin();
-	    Book todo = new Book(3, "Robinson Crusoe", "Dafoe..?");
 	    BookKeeper keeper = new BookKeeper();
 	    keeper.setBook(todo);
 	    keeper.setAmount(2);
 	    em.persist(todo);
 	    em.persist(keeper);
 	    em.getTransaction().commit();
-
-	    em.close();
+	     */
+	}
+	
+	public void clean(){
+		em.close();
 	}
 	
 	public void addPossibleBook(Book book){
-		//possibleBooks.add(book);
+		em.getTransaction().begin();
+		em.persist(book);
+		em.getTransaction().commit();
+	}
+	
+	public List<Book> getPossibleBooks(){
+		Query q = em.createQuery("select b from Book b");
+	    List<Book> bookList = q.getResultList();
+	    return bookList;
 	}
 	
 	public void moveBookToBookstore(Book book, int quantity) throws NotExistsOnPossibleBooksListException, NotEnoughBooksInBookstoreException{
