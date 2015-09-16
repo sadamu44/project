@@ -16,16 +16,8 @@ import pl.edu.agh.student.sadam.bookstore.NotExistsOnPossibleBooksListException;
 public class BookstoreManager {
 	private static EntityManagerFactory factory;
 	private EntityManager em;
-	//private List<Book> possibleBooks;
-	//private Map<Book, Integer> warehouse;
-	//private Map<Book, Integer> bookstore;
-	
-	public static void main(String[] args){
-		BookstoreManager manager = new BookstoreManager();
-	}
 	
 	public BookstoreManager(){
-		//konstruktor
 		init();
 	}
 	
@@ -58,6 +50,14 @@ public class BookstoreManager {
 		Query q = em.createQuery("select b from Book b");
 	    List<Book> bookList = q.getResultList();
 	    return bookList;
+	}
+	
+	public void removePossibleBook(Long isbn){
+		Book book = em.find(Book.class, isbn);
+		 
+		em.getTransaction().begin();
+		em.remove(book);
+		em.getTransaction().commit();
 	}
 	
 	public void moveBookToBookstore(Book book, int quantity) throws NotExistsOnPossibleBooksListException, NotEnoughBooksInBookstoreException{
