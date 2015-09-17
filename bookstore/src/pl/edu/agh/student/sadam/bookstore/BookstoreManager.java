@@ -60,27 +60,133 @@ public class BookstoreManager {
 		em.getTransaction().commit();
 	}
 	
-	public void moveBookToBookstore(Book book, int quantity) throws NotExistsOnPossibleBooksListException, NotEnoughBooksInBookstoreException{
-		
-		if(quantity < 0)
+	public void orderToWarehouse(long isbn, int amount) throws NotExistingBookException, InvalidDatabaseStateException{
+		if(amount <= 0)
 			throw new InvalidParameterException();
 		
-		/*if(!warehouse.containsKey(book))
-			throw new NotExistsOnPossibleBooksListException();
+		Book book = em.find(Book.class, isbn);
 		
-		if(warehouse.get(book) < quantity)
-			throw new NotEnoughBooksInBookstoreException();
+		if(book == null)
+			throw new NotExistingBookException();
 		
-		warehouse.put(book, warehouse.get(book) - quantity);
-		bookstore.put(book, bookstore.get(book) + quantity);*/
+		Query q = em.createQuery("select w from Warehouse w where w.book.isbn = :isbn");
+		q.setParameter("isbn", isbn);
+	    List<Warehouse> warehouseEntities = q.getResultList();
+	    
+	    if(warehouseEntities.size() > 1 || warehouseEntities.size() < 0)
+	    	throw new InvalidDatabaseStateException();
+	    
+	    if(warehouseEntities.size() == 1){
+	    	warehouseEntities.get(0).setAmount(warehouseEntities.get(0).getAmount() + amount); 
+	    	em.getTransaction().begin();
+			em.persist(warehouseEntities.get(0));
+			em.getTransaction().commit();
+	    } else{
+	    	Warehouse warehouseEntry = new Warehouse();
+	    	warehouseEntry.setBook(book);
+	    	warehouseEntry.setAmount(amount);
+	    	
+	    	em.getTransaction().begin();
+			em.persist(warehouseEntry);
+			em.getTransaction().commit();
+	    }
+	    
 	}
 	
-	public void addBookToWarehouse(Book book, int quantity) throws NotExistsOnPossibleBooksListException{
-		if(quantity < 0)
+	public List<Warehouse> getWarehouseEntries(){
+		Query q = em.createQuery("select w from Warehouse w");
+	    List<Warehouse> warehouseEntries = q.getResultList();
+	    return warehouseEntries;
+	}
+	
+	
+	public List<Shop> getShopEntries(){
+		Query q = em.createQuery("select s from Shop s");
+	    List<Shop> shopEntries = q.getResultList();
+	    return shopEntries;
+	}
+	
+	public void moveToShop(long isbn, int amount) throws NotExistingBookException, InvalidDatabaseStateException, TooMuchException
+	{
+		if(amount <= 0)
 			throw new InvalidParameterException();
+
+		Book book = em.find(Book.class, isbn);
 		
-		/*if(!warehouse.containsKey(book))
-			throw new NotExistsOnPossibleBooksListException();*/
+		if(book == null)
+			throw new NotExistingBookException();
+		
+		Query q = em.createQuery("select w from Warehouse w where w.book.isbn = :isbn");
+		q.setParameter("isbn", isbn);
+	    List<Warehouse> warehouseEntities = q.getResultList();
+	    
+	    if(warehouseEntities.size() > 1 || warehouseEntities.size() < 0)
+	    	throw new InvalidDatabaseStateException();
+	    if(warehouseEntities.size() ==0)
+	    	throw new InvalidParameterException();
+	    
+	    if (warehouseEntities.get(0).getAmount() < amount)
+	    	throw new TooMuchException();	
+	    	
+	    warehouseEntities.get(0).setAmount(warehouseEntities.get(0).getAmount() - amount);	    
+	    em.getTransaction().begin();
+		em.persist(warehouseEntities.get(0));
+		em.getTransaction().commit();
+//////	    
+		Query u = em.createQuery("select s from Shop s where s.book.isbn = :isbn");
+		u.setParameter("isbn", isbn);
+	    List<Shop> shopEntities = u.getResultList();
+	    
+	   if(shopEntities.size() > 1 || shopEntities.size() < 0)
+	    	throw new InvalidDatabaseStateException();
+	    
+	    if(shopEntities.size() == 1){
+	    	shopEntities.get(0).setAmount(shopEntities.get(0).getAmount() + amount); 
+	    	em.getTransaction().begin();
+			em.persist(shopEntities.get(0));
+			em.getTransaction().commit();
+	    } else{
+	    	Shop shopEntry = new Shop();
+	    	shopEntry.setBook(book);
+	    	shopEntry.setAmount(amount);
+	    	
+	    	em.getTransaction().begin();
+			em.persist(shopEntry);
+			em.getTransaction().commit();
+	    }
+		
+	}
+	
+	
+	
+	
+	public void sellFromShop(long isbn, int amount) throws NotExistingBookException, InvalidDatabaseStateException, TooMuchException {
+
+		if(amount <= 0)
+			throw new InvalidParameterException();
+
+		Book book = em.find(Book.class, isbn);		
+		if(book == null)
+			throw new NotExistingBookException();
+		
+		Query q = em.createQuery("select s from Shop s where s.book.isbn = :isbn");
+		q.setParameter("isbn", isbn);
+	    List<Shop> shopEntities = q.getResultList();
+	    
+	    if(shopEntities.size() > 1 || shopEntities.size() < 0)
+	    	throw new InvalidDatabaseStateException();
+	    if(shopEntities.size() ==0)
+	    	throw new InvalidParameterException();
+	    
+	    if (shopEntities.get(0).getAmount() < amount)
+	    	throw new TooMuchException();	
+	    	
+	    shopEntities.get(0).setAmount(shopEntities.get(0).getAmount() - amount);	    
+	    em.getTransaction().begin();
+		em.persist(shopEntities.get(0));
+		em.getTransaction().commit();	
+		
+		
 	}
 	
 }

@@ -5,6 +5,8 @@
   <persistence-unit name="bookstore" transaction-type="RESOURCE_LOCAL">
     <class>pl.edu.agh.student.sadam.bookstore.Book</class>
     <class>pl.edu.agh.student.sadam.bookstore.BookKeeper</class>
+    <class>pl.edu.agh.student.sadam.bookstore.Warehouse</class>
+    <class>pl.edu.agh.student.sadam.bookstore.Shop</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
       <property name="javax.persistence.jdbc.url"
